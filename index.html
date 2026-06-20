@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+    content="Uncertainty-Aware Multi-Robot Convoy Planning via Two-Stage Stochastic Optimization.">
+  <meta name="keywords"
+    content="multi-robot systems, convoy planning, stochastic optimization, vehicle routing, synchronization, RGLS">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Uncertainty-Aware Multi-Robot Convoy Planning via Two-Stage Stochastic Optimization</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+
+<body>
+
+  <nav class="navbar is-fixed-top ttso-nav" role="navigation" aria-label="main navigation">
+    <div class="container is-max-desktop">
+      <div class="navbar-menu is-active">
+        <div class="navbar-start ttso-nav-links">
+          <a class="navbar-item" href="#overview">Overview</a>
+          <a class="navbar-item" href="#methods">Methods</a>
+          <a class="navbar-item" href="#results">Results</a>
+          <a class="navbar-item" href="#analysis">Analysis</a>
+          <a class="navbar-item" href="#BibTeX">BibTeX</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <section class="hero ttso-hero">
+    <div class="hero-body">
+      <div class="container is-max-desktop">
+        <div class="columns is-centered">
+          <div class="column has-text-centered">
+            <p class="publication-venue is-size-5">IEEE Transactions on Automation Science and Engineering, 2026</p>
+            <!-- <p class="ttso-acronym is-size-4">S-VRPMS-CC</p> -->
+            <h1 class="title is-2 publication-title">
+              Uncertainty-Aware Multi-Robot Convoy Planning via Two-Stage Stochastic Optimization
+            </h1>
+            <div class="is-size-5 publication-authors">
+              <span class="author-block">Anonymous Authors</span>
+            </div>
+            <p class="publication-keywords is-size-6">
+              Multi-robot systems · Robot coordination · Mission planning · Logistics automation · Robust planning
+            </p>
+            <div class="publication-links column has-text-centered">
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark coming-soon-link"
+                  data-tooltip="Coming soon!">
+                  <span class="icon"><i class="fas fa-file-pdf"></i></span>
+                  <span>Paper (Coming soon!)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark coming-soon-link"
+                  data-tooltip="Coming soon!">
+                  <span class="icon"><i class="ai ai-arxiv"></i></span>
+                  <span>arXiv (Coming soon!)</span>
+                </a>
+              </span>
+              <span class="link-block">
+                <a href="#" class="external-link button is-normal is-rounded is-dark coming-soon-link"
+                  data-tooltip="Coming soon!">
+                  <span class="icon"><i class="fab fa-github"></i></span>
+                  <span>Code (Coming soon!)</span>
+                </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ttso-slogan-section" id="overview">
+    <div class="container is-max-desktop has-text-centered">
+      <p class="ttso-slogan">
+        <span class="s1">Robust</span>&nbsp;<span class="s2">Convoy</span>&nbsp;<span class="s3">Routes</span>&nbsp;<span
+          class="s4">Under</span>&nbsp;<span class="s5">Travel-Time Uncertainty</span><span class="s-dot">.</span>
+      </p>
+      <p class="ttso-slogan-sub">
+        A two-stage stochastic framework that commits routing, convoy topology, and nominal schedules before delays are
+        observed — then resolves realized timing through scenario-dependent recourse.
+      </p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Application Scenarios</h2>
+          <div class="columns is-multiline">
+            <div class="column is-half">
+              <figure class="image">
+                <img src="./static/images/fig1.jpg" alt="Outdoor convoy operation">
+              </figure>
+              <p class="caption-text"><strong>Outdoor convoy operation.</strong> Synchronized movement in uncertain
+                terrain, where travel-time perturbations propagate through the formation.</p>
+            </div>
+            <div class="column is-half">
+              <figure class="image">
+                <img src="./static/images/fig2.png" alt="Indoor logistics operation">
+              </figure>
+              <p class="caption-text"><strong>Indoor logistics operation.</strong> Coordinated task service by a
+                homogeneous robotic fleet in a structured warehouse environment.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">TL;DR</h2>
+          <div class="content has-text-justified">
+            <p>
+              We develop <strong>S-VRPMS-CC</strong>, a two-stage stochastic extension of the Vehicle Routing Problem
+              with Multiple Synchronizations–Convoy Constraints (VRPMS-CC). Routing assignments, convoy-flow topology,
+              and the nominal schedule are committed as first-stage decisions; realized start times, waiting, and soft
+              time-window violations are resolved as recourse. Two solvers are proposed: an exact branch-and-Benders-cut
+              procedure and a Recourse-Guided Layered Search (RGLS) with closed-form second-stage evaluation.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Abstract</h2>
+          <div class="content has-text-justified">
+            <p>
+              Multi-robot systems are increasingly deployed in logistics, surveillance, and defense for missions
+              demanding coordinated fleet effort. Convoy operations place the strictest demands on such coordination: a
+              homogeneous group must rendezvous at distributed tasks, traverse shared edges as a synchronized formation,
+              and maintain close proximity throughout each service. A single delay, from localization drift, reactive
+              replanning, or terrain variability, propagates instantly across the formation and cascades to every
+              downstream operation, rendering nominal-time schedules brittle in practice.
+            </p>
+            <p>
+              This paper develops the S-VRPMS-CC, a two-stage stochastic extension of the deterministic VRPMS-CC.
+              Routing assignments, convoy-flow topology, and the nominal schedule are committed as first-stage
+              decisions; realized start times, waiting, and soft time-window violations are resolved as recourse, with
+              delays modeled as correlated multiplicative perturbations and the expected recourse approximated via Sample
+              Average Approximation (SAA). Two methods are proposed: an exact branch-and-Benders-cut procedure exploiting
+              the block-angular recourse structure, and a Recourse-Guided Layered Search (RGLS) evaluating each
+              candidate via closed-form recovery of the exact second-stage optimum over compact chain and arborescence
+              encodings.
+            </p>
+            <p>
+              On synthetic and MAPF benchmark instances, RGLS reproduces the reference objective on the random test
+              bed, stays within 0.80% of the best benchmark incumbent on average, reduces mean wall-clock time by roughly
+              two orders of magnitude, and returns feasible solutions where exact methods fail. These results demonstrate
+              that high-quality, uncertainty-aware convoy plans can be generated within seconds for small and medium
+              fleets and within two minutes at the largest scales tested, making the framework practical for real-world
+              fleet deployment under tight operational timelines.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Note to Practitioners</h2>
+          <div class="content has-text-justified">
+            <p>
+              In convoy operations, a delay affecting any one platform propagates immediately to the entire formation,
+              since all members must arrive and depart together. Such delays are routine in practice; congestion, sensor
+              drift, and terrain variability regularly push travel times beyond planned values, rendering schedules
+              optimized under ideal conditions brittle under real-world disruptions.
+            </p>
+            <p>
+              The framework developed here gives mission designers a tool for generating convoy routes and schedules
+              robust to expected travel-time variability. Required inputs are a travel-time matrix, fleet size, a task
+              list with service windows, and a statistical characterization of delay variability — typically available
+              from deployment logs or platform specifications; the output is a complete mission plan specifying routing,
+              convoy formation, and timetable.
+            </p>
+            <p>
+              A key operational advantage is computational efficiency at deployment scale: the algorithm returns
+              high-quality plans within seconds for small and medium fleets and within tens of seconds to under two
+              minutes for fleets of up to thirty robots, supporting both pre-mission scheduling and rapid replanning.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Contributions</h2>
+          <div class="content has-text-justified">
+            <ul>
+              <li>
+                We formulate convoy routing as a two-stage stochastic mixed-integer program (S-VRPMS-CC): routing
+                assignments, convoy-flow topology, and a nominal schedule are fixed as first-stage decisions, while
+                realized start times, anticipatory waiting, and time-window violations are resolved as scenario-dependent
+                recourse. Unlike standard stochastic VRP formulations, the entire formation is coupled within a single
+                per-scenario recourse, accommodating correlated multiplicative delay perturbations.
+              </li>
+              <li>
+                We develop two complementary solvers: a branch-and-Benders-cut procedure exploiting block-angular recourse
+                structure, and Recourse-Guided Layered Search (RGLS) that searches chain and arborescence encodings,
+                evaluates candidates via closed-form second-stage recovery, and guides a recourse-aware destroy-and-repair
+                search organized around support-value layering.
+              </li>
+              <li>
+                On synthetic instances and MAPF benchmark maps, RGLS reproduces the exact solver's reference objective on
+                random instances, reduces mean computation time by roughly two orders of magnitude, stays within 0.80% of
+                the best benchmark incumbent on average, and is the only method to return feasible solutions at the
+                largest scale where both exact methods fail. Value-of-stochastic-solution and sensitivity analyses quantify
+                the cost of ignoring uncertainty and characterize the policy's response to delay magnitude and
+                environmental correlation.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Framework Overview</h2>
+          <div class="content has-text-centered">
+            <figure class="image">
+              <img src="./static/images/fig_framework.png" alt="Research framework overview">
+            </figure>
+            <p class="has-text-justified caption-text">
+              <strong>Proposed research framework.</strong> First-stage decisions commit routing, convoy topology, and
+              nominal schedule before travel times are observed; second-stage recourse resolves realized timing,
+              waiting, and soft time-window violations under sampled delay scenarios.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered has-text-centered" id="methods">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Solution Methods</h2>
+          <div class="content has-text-justified">
+            <p>
+              <strong>Branch-and-Benders-cut.</strong> The recourse problem decouples across scenarios once first-stage
+              decisions are fixed. A master problem handles routing and convoy topology while scenario-wise subproblems
+              inject optimality cuts via a lazy-constraint callback, exploiting the block-angular structure of the
+              extensive form.
+            </p>
+            <p>
+              <strong>Recourse-Guided Layered Search (RGLS).</strong> A metaheuristic that searches compact chain and
+              arborescence encodings absorbing convoy topology by construction. Every candidate is scored by closed-form
+              recovery of the exact second-stage optimum. The search proceeds in two phases: a chain phase with adaptive
+              destroy-and-repair intensified by variable-neighbourhood descent, followed by arborescence refinement that
+              lifts the best chain to general branching topologies.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ttso-results-section" id="results">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Experimental Results</h2>
+          <div class="columns is-multiline ttso-highlights">
+            <div class="column is-one-third">
+              <div class="highlight-card">
+                <p class="highlight-value">0.80%</p>
+                <p class="highlight-label">Mean gap vs. benchmark incumbent</p>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div class="highlight-card">
+                <p class="highlight-value">~100×</p>
+                <p class="highlight-label">Faster than exact solvers on average</p>
+              </div>
+            </div>
+            <div class="column is-one-third">
+              <div class="highlight-card">
+                <p class="highlight-value">&lt; 2 min</p>
+                <p class="highlight-label">Feasible plans for 30-robot fleets</p>
+              </div>
+            </div>
+          </div>
+          <div class="content has-text-justified">
+            <p>
+              We evaluate three solvers — Gurobi (monolithic extensive form), branch-and-Benders-cut, and RGLS — on
+              synthetic instances at small, medium, and large scales, plus five MAPF benchmark maps from
+              <a href="https://movingai.com" target="_blank" rel="noopener">movingai.com</a>. Travel-time delays follow
+              a lognormal multiplicative model with environmental correlation ρ = 0.3.
+            </p>
+            <p>
+              <strong>Key findings:</strong> On medium-scale random instances, RGLS reproduces the exact optimum on all
+              five seeds roughly two orders of magnitude faster than Gurobi. On large-scale instances, both exact methods
+              fail to return feasible incumbents on multiple seeds, whereas RGLS finds feasible solutions on all five in
+              under two minutes. Aggregated over instances where Gurobi returns an incumbent, RGLS attains a mean relative
+              gap of 0.80% on benchmark maps, with mean wall-clock time falling from 497.7 s to 4.5 s on random instances
+              and from 967.4 s to 3.9 s on benchmark maps.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="columns is-centered">
+        <div class="column is-four-fifths">
+          <div class="table-container">
+            <table class="table is-bordered is-striped is-narrow is-fullwidth results-table">
+              <caption class="has-text-centered caption-text">
+                Selected solver comparison (objective / time in seconds). A dash denotes no feasible incumbent within
+                3600 s.
+              </caption>
+              <thead>
+                <tr>
+                  <th>Instance</th>
+                  <th>|K|</th>
+                  <th>|S<sub>T</sub>|</th>
+                  <th colspan="2">Gurobi</th>
+                  <th colspan="2">Benders</th>
+                  <th colspan="2">RGLS</th>
+                </tr>
+                <tr class="subheader">
+                  <th colspan="3"></th>
+                  <th>Obj.</th>
+                  <th>Time</th>
+                  <th>Obj.</th>
+                  <th>Time</th>
+                  <th>Obj.</th>
+                  <th>Time</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group-row"><td colspan="9"><em>Random — medium</em></td></tr>
+                <tr>
+                  <td>M_01</td><td>5</td><td>17</td>
+                  <td>4567.37</td><td>477.4</td>
+                  <td>4801.05</td><td>3600.7</td>
+                  <td><strong>4567.37</strong></td><td><strong>5.3</strong></td>
+                </tr>
+                <tr>
+                  <td>M_05</td><td>5</td><td>13</td>
+                  <td>1867.08</td><td>431.7</td>
+                  <td>2021.20</td><td>3601.0</td>
+                  <td><strong>1867.08</strong></td><td><strong>4.9</strong></td>
+                </tr>
+                <tr class="group-row"><td colspan="9"><em>Random — large</em></td></tr>
+                <tr>
+                  <td>L_01</td><td>10</td><td>82</td>
+                  <td>9822.74</td><td>3601.4</td>
+                  <td>9840.57</td><td>3619.4</td>
+                  <td><strong>9822.74</strong></td><td><strong>14.5</strong></td>
+                </tr>
+                <tr>
+                  <td>L_05</td><td>30</td><td>676</td>
+                  <td>—</td><td>3600.2</td>
+                  <td>—</td><td>3603.3</td>
+                  <td><strong>36413.69</strong></td><td><strong>107.6</strong></td>
+                </tr>
+                <tr class="group-row"><td colspan="9"><em>MAPF benchmarks</em></td></tr>
+                <tr>
+                  <td>B_01 (Berlin)</td><td>5</td><td>24</td>
+                  <td>5463.02</td><td>107.3</td>
+                  <td>5463.02</td><td>270.5</td>
+                  <td><strong>5463.02</strong></td><td><strong>3.2</strong></td>
+                </tr>
+                <tr>
+                  <td>B_05 (maze-32-32-4)</td><td>6</td><td>50</td>
+                  <td>—</td><td>3600.3</td>
+                  <td>—</td><td>3600.1</td>
+                  <td><strong>1692.06</strong></td><td><strong>7.8</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Solution Visualization</h2>
+          <div class="content has-text-justified">
+            <p>
+              On benchmark instance B_05 (<code>maze-32-32-4</code>), where neither exact method returns a feasible
+              incumbent within the time limit, RGLS finds a complete convoy plan. A trunk of six platforms departs the
+              depot, sheds sub-convoys at split points as support contracts along the spine, and depleted groups return
+              independently along shortest grid paths.
+            </p>
+          </div>
+          <div class="columns is-multiline">
+            <div class="column is-half">
+              <figure class="image">
+                <img src="./static/images/maze-32-32-4_routing.png" alt="Convoy routing on occupancy grid">
+              </figure>
+              <p class="caption-text"><strong>(a) Convoy routing.</strong> Committed convoy routing on the occupancy
+                grid; trunk width reflects the number of platforms carried.</p>
+            </div>
+            <div class="column is-half">
+              <figure class="image">
+                <img src="./static/images/maze-32-32-4_schedule.png" alt="Planned vs realized schedule">
+              </figure>
+              <p class="caption-text"><strong>(b) Schedule.</strong> Late-as-possible nominal schedule against realized
+                start times over the scenario sample.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ttso-results-section" id="analysis">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Value of Stochastic Modeling</h2>
+          <div class="content has-text-justified">
+            <p>
+              The value of the stochastic solution (VSS) is positive on every small and medium instance, averaging
+              20.35% of the recourse problem (RP) objective — a schedule laid out for mean travel times retains no
+              temporal margin, so realized delays cause the convoy to accumulate waiting and time-window violations across
+              the entire formation. The expected value of perfect information (EVPI) is also positive throughout,
+              quantifying the cost that would be eliminated if travel times were known before first-stage decisions.
+            </p>
+          </div>
+          <div class="table-container">
+            <table class="table is-bordered is-striped is-narrow is-fullwidth results-table">
+              <caption class="has-text-centered caption-text">
+                Value of stochastic solution (VSS) and expected value of perfect information (EVPI).
+              </caption>
+              <thead>
+                <tr>
+                  <th>Instance</th>
+                  <th>|S<sub>T</sub>|</th>
+                  <th>RP</th>
+                  <th>EEV</th>
+                  <th>WS</th>
+                  <th>VSS (%)</th>
+                  <th>EVPI (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="group-row"><td colspan="7"><em>Small (|K| = 3)</em></td></tr>
+                <tr><td>S_01</td><td>7</td><td>670.08</td><td>771.19</td><td>625.97</td><td>15.09</td><td>6.58</td></tr>
+                <tr><td>S_04</td><td>9</td><td>1144.90</td><td>1274.19</td><td>672.04</td><td>11.29</td><td>41.30</td></tr>
+                <tr class="group-row"><td colspan="7"><em>Medium (|K| = 5)</em></td></tr>
+                <tr><td>M_01</td><td>17</td><td>4567.37</td><td>5172.80</td><td>4354.23</td><td>13.26</td><td>4.67</td></tr>
+                <tr><td>M_05</td><td>13</td><td>1867.08</td><td>2434.43</td><td>1810.78</td><td>30.39</td><td>3.02</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered has-text-centered">
+        <div class="column is-four-fifths">
+          <h2 class="title is-3 section-heading">Sensitivity Analysis</h2>
+          <div class="content has-text-justified">
+            <p>
+              First-stage routing and convoy topology remain structurally invariant across tested ranges of delay
+              magnitude (σ) and environmental correlation (ρ); the model's response to uncertainty concentrates in
+              second-stage recourse, dominated by the lateness penalty in every regime.
+            </p>
+          </div>
+          <figure class="image">
+            <img src="./static/images/fig_sigma_sensitivity.png"
+              alt="Sensitivity to delay magnitude sigma">
+          </figure>
+          <p class="caption-text has-text-centered">
+            <strong>Delay magnitude (σ).</strong> Expected total cost grows super-linearly as σ rises; recourse share
+            climbs to roughly two thirds at the baseline σ = 0.6.
+          </p>
+          <figure class="image" style="margin-top: 1.5rem;">
+            <img src="./static/images/fig_rho_sensitivity.png"
+              alt="Sensitivity to environmental correlation rho">
+          </figure>
+          <p class="caption-text has-text-centered">
+            <strong>Environmental correlation (ρ).</strong> Out-of-sample expected recourse rises roughly threefold from
+            independent delays to ρ = 0.9, as joint slow-edge realizations propagate synchronized slippage through the
+            convoy.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="BibTeX">
+    <div class="container is-max-desktop content">
+      <h2 class="title">BibTeX</h2>
+      <pre><code>@article{anonymous2026svrpmscc,
+  author  = {Anonymous Authors},
+  title   = {Uncertainty-Aware Multi-Robot Convoy Planning via Two-Stage Stochastic Optimization},
+  journal = {IEEE Transactions on Automation Science and Engineering},
+  year    = {2026},
+}</code></pre>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="content has-text-centered">
+        <span class="icon-link" title="Paper (TBD)">
+          <i class="fas fa-file-pdf"></i>
+        </span>
+        <span class="icon-link" title="Code (TBD)">
+          <i class="fab fa-github"></i>
+        </span>
+      </div>
+      <div class="columns is-centered">
+        <div class="column is-8">
+          <div class="content">
+            <p>
+              This website is licensed under a <a rel="license"
+                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+                Commons Attribution-ShareAlike 4.0 International License</a>.
+            </p>
+            <p>
+              Page template adapted from the <a href="https://nerfies.github.io">Nerfies</a> project page.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</body>
+
+</html>
